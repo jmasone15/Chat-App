@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const key = "8fUM+bAxexjhyBqRxQywXcAAmh4&NHVDA987A&A##HFDny=&Sm"
+const key = "8fUM+bAxexjhyBqRxQywXcAAmh4&NHVDA987A&A##HFDny=&Sm";
 
 // Signup Route
 router.post("/signup", async (req, res) => {

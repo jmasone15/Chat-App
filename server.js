@@ -30,6 +30,7 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/chatApp", {
 
 // Routes
 app.use("/user", require("./routes/userRoutes"));
+app.use("/message", require("./routes/messageRoutes"));
 
 
 // Start Server
