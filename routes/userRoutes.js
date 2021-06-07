@@ -7,17 +7,25 @@ const key = "8fUM+bAxexjhyBqRxQywXcAAmh4&NHVDA987A&A##HFDny=&Sm";
 // Signup Route
 router.post("/signup", async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, passwordVerify } = req.body;
+
+        //Validation
+        if (password.length < 6) {
+            return res.status(400).send("Please enter a password that is at least 6 characters long.");
+        };
+        if (password !== passwordVerify) {
+            return res.status(400).send("Please enter the same password twice.");
+        };
 
         // Check for existing users
         const existingEmail = await User.findOne({ email });
         const existingUser = await User.findOne({ username });
         if (existingEmail) {
             return res.status(400).send("An account with this email already exists")
-        }
+        };
         if (existingUser) {
             return res.status(400).send("An account with this username already exists")
-        }
+        };
 
 
         // Encrypt password
@@ -38,7 +46,7 @@ router.post("/signup", async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).send(savedUser);
     };
 });
 
@@ -65,7 +73,7 @@ router.post("/login", async (req, res) => {
         }, key);
         res.cookie("token", token, {
             httpOnly: false,
-        }).send(`Welcome back: ${existingUser.username}`);
+        }).send(existingUser);
 
     } catch (err) {
         console.error(err);
@@ -100,6 +108,7 @@ router.get("/loggedIn", (req, res) => {
 // User Data Route
 router.get("/profile/:id", async (req, res) => {
     try {
+        console.log(req.params.id)
         const userInfo = await User.findById(req.params.id);
         res.json(userInfo);
     } catch (err) {
@@ -109,3 +118,5 @@ router.get("/profile/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+//60be8d9fd22dd52de87c7bcc

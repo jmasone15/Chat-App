@@ -4,6 +4,8 @@ const messageSchema = new mongoose.Schema({
     body: { type: String, required: true },
     toId: { type: String, required: true },
     fromId: { type: String, required: true },
+    toUser: { type: String, required: true },
+    fromUser: { type: String, required: true },
     date: { type: Date, default: Date.now }
 });
 

@@ -9,6 +9,7 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordVerify, setPasswordVerify] = useState("");
 
     const { getLoggedIn } = useContext(AuthContext);
     const history = useHistory();
@@ -41,7 +42,7 @@ export default function Login() {
 
         try {
             // Grab user data from form
-            const signUpData = { email, username, password };
+            const signUpData = { email, username, password, passwordVerify };
 
             // API calls to log user in
             await axios.post("/user/signup", signUpData);
@@ -51,6 +52,7 @@ export default function Login() {
             setEmail("");
             setUsername("");
             setPassword("");
+            setPasswordVerify("");
 
             // Send to protected home page
             history.push("/home");
@@ -116,6 +118,14 @@ export default function Login() {
                             required
                             placeholder="Password"
                             onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <br /><br />
+                        <input
+                            type="password"
+                            value={passwordVerify}
+                            required
+                            placeholder="Re-enter Password"
+                            onChange={(e) => setPasswordVerify(e.target.value)}
                         />
                         <br /><br />
                         <button type="submit">Submit</button>
