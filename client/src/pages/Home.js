@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import UserContext from "../utils/UserContext";
 import axios from "axios";
 
@@ -9,6 +10,7 @@ export default function Home() {
     const [convoShow, setConvoShow] = useState(false);
     const [newUser2, setNewUser2] = useState("");
     const [user2Id, setUser2Id] = useState("");
+    const history = useHistory();
 
     async function getConversations() {
         if (userId !== "") {
@@ -19,9 +21,9 @@ export default function Home() {
         }
     }
 
-    async function getOneConversation() {
-        const convo = await axios.get(`/message/convo/one/${userId}/${user2Id}`);
-        console.log(convo.data);
+    async function getOneConversation(e, id) {
+        e.preventDefault();
+        history.push(`/convo/${id}`);
     }
 
     async function startConversation(e) {
@@ -72,7 +74,10 @@ export default function Home() {
                 {convoShow === true && (
                     <div>
                         {conversations.map((c) => (
-                            <p>With: {c.user2}</p>
+                            <div>
+                                <p>With: {c.user2}</p>
+                                <button onClick={(e) => getOneConversation(e, c.user2Id)}>Open Convo</button>
+                            </div>
                         ))}
                     </div>
                 )}

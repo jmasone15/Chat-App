@@ -52,7 +52,7 @@ router.post("/convo", auth, async (req, res) => {
         const savedConvo2 = await newConvo2.save();
         const convos = [savedConvo, savedConvo2];
 
-        res.send(convos);
+        res.json(convos);
 
     } catch (err) {
         console.error(err);
@@ -61,11 +61,11 @@ router.post("/convo", auth, async (req, res) => {
 });
 
 // Get One Conversation Data
-router.get("/convo/one/:user1Id/:user2Id", auth, async (req, res) => {
+router.get("/convo/:id", auth, async (req, res) => {
     try {
-        const { user1Id, user2Id } = req.params;
+        const { id } = req.params;
 
-        const convo = await Conversation.findOne({ user1Id, user2Id });
+        const convo = await Conversation.findById(id);
         res.json(convo);
 
     } catch (err) {

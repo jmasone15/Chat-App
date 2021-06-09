@@ -5,6 +5,7 @@ import Nav from "./components/Nav";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+import Conversation from "./pages/Conversation ";
 
 export default function Router() {
 
@@ -21,6 +22,9 @@ export default function Router() {
                     <Route exact path="/home">
                         <Redirect to="/" />
                     </Route>
+                    <Route exact path="/convo">
+                        <Redirect to="/" />
+                    </Route>
                     <Route>
                         <NotFound />
                     </Route>
@@ -33,6 +37,9 @@ export default function Router() {
                     </Route>
                     <Route exact path="/home">
                         <Home />
+                    </Route>
+                    <Route exact path="/convo/:id">
+                        <Conversation />
                     </Route>
                     <Route>
                         <NotFound />
