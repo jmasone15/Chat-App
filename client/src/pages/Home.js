@@ -4,48 +4,49 @@ import axios from "axios";
 
 export default function Home() {
 
-    const { username } = useContext(UserContext);
-    const [sentMessages, setSentMessages] = useState([]);
-    const [receivedMessages, setReceivedMessages] = useState([]);
-    const [mUser, setMUser] = useState("");
-    const [mBody, setMBody] = useState("");
+    const { userId, username } = useContext(UserContext);
+    const [conversations, setConversations] = useState("");
+    const [convoShow, setConvoShow] = useState(false);
+    const [newUser2, setNewUser2] = useState("");
+    const [user2Id, setUser2Id] = useState("");
 
-    async function getSentMessages() {
-        const sentMes = await axios.get("/message/sent");
-        setSentMessages(sentMes.data);
-        console.log(sentMes.data);
-    };
-
-    async function getReceivedMessages() {
-        const receivedMes = await axios.get("/message/received");
-        setReceivedMessages(receivedMes.data);
-        console.log(receivedMes.data);
-    };
-
-    async function sendMessage(e) {
-        e.preventDefault();
-
-        try {
-            const messageData = {
-                body: mBody,
-                toUser: mUser,
-                fromUser: username
-            }
-
-            await axios.post("/message", messageData);
-            alert("success")
-            getSentMessages();
-            setMBody("");
-            setMUser("");
-        } catch (err) {
-            console.error(err);
+    async function getConversations() {
+        if (userId !== "") {
+            const convos = await axios.get(`/message/convos/${userId}`);
+            setConversations(convos.data);
+            setConvoShow(true);
+            console.log(convos.data);
         }
     }
 
+    async function getOneConversation() {
+        const convo = await axios.get(`/message/convo/one/${userId}/${user2Id}`);
+        console.log(convo.data);
+    }
+
+    async function startConversation(e) {
+        e.preventDefault();
+
+        try {
+
+            const convoData = {
+                user1: username,
+                user2: newUser2,
+                user1Id: userId
+            };
+
+            await axios.post("/message/convo", convoData);
+            getConversations();
+            setNewUser2("");
+
+        } catch (err) {
+            console.error(err);
+        };
+    };
+
     useEffect(() => {
-        getSentMessages();
-        getReceivedMessages();
-    }, [])
+        getConversations();
+    }, [userId]);
 
     return (
         <div>
@@ -55,35 +56,26 @@ export default function Home() {
             </header>
             <main style={{ display: "inline" }}>
                 <div style={{ textAlign: "center" }}>
-                    <h3>Send a message</h3>
-                    <form onSubmit={(e) => sendMessage(e)}>
-                        <label>To:</label>
-                        <input type="text" value={mUser} onChange={(e) => setMUser(e.target.value)} />
-                        <br /><br />
-                        <label>Body:</label>
-                        <textarea value={mBody} onChange={(e) => setMBody(e.target.value)} />
+                    <h3>Start a Conversation</h3>
+                    <form onSubmit={(e) => startConversation(e)}>
+                        <input
+                            type="text"
+                            value={newUser2}
+                            onChange={(e) => setNewUser2(e.target.value)}
+                            required
+                            placeholder="Username Here"
+                        />
                         <br /><br />
                         <button type="submit">Submit</button>
                     </form>
                 </div>
-                <div style={{ float: "left", marginLeft: "200px" }}>
-                    <h3>Your <u>sent</u> messages</h3>
-                    {sentMessages.map((sm) => (
-                        <div style={{ border: "1px solid blue", marginTop: "20px", padding: "10px" }}>
-                            <p><b>To:</b> {sm.toUser}</p>
-                            <p><b>Message:</b> {sm.body}</p>
-                        </div>
-                    ))}
-                </div>
-                <div style={{ float: "right", marginRight: "200px" }}>
-                    <h3>Your <u>received</u> messages</h3>
-                    {receivedMessages.map((sm) => (
-                        <div style={{ border: "1px solid red", marginTop: "20px", padding: "10px" }}>
-                            <p><b>From:</b> {sm.fromUser}</p>
-                            <p><b>Message:</b> {sm.body}</p>
-                        </div>
-                    ))}
-                </div>
+                {convoShow === true && (
+                    <div>
+                        {conversations.map((c) => (
+                            <p>With: {c.user2}</p>
+                        ))}
+                    </div>
+                )}
             </main>
         </div>
     )
