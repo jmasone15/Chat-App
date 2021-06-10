@@ -38,7 +38,7 @@ export default function Router() {
                     <Route exact path="/home">
                         <Home />
                     </Route>
-                    <Route exact path="/convo/:id">
+                    <Route exact path="/convo/:id/:name">
                         <Conversation />
                     </Route>
                     <Route>

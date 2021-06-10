@@ -8,12 +8,11 @@ const auth = require("../middleware/auth");
 router.post("/", auth, async (req, res) => {
     try {
 
-        const { body, toUser, fromUser } = req.body;
-        const toId = await User.findOne({ username: toUser });
+        const { body, fromUser, convoId } = req.body;
 
-        const newMessage = new Message({ body: body, toId: toId._id, fromId: req.user, toUser: toUser, fromUser: fromUser });
-
+        const newMessage = new Message({ convoId, body, fromUser });
         const savedMessage = await newMessage.save();
+
         res.json(savedMessage);
 
     } catch (err) {
@@ -27,38 +26,49 @@ router.post("/convo", auth, async (req, res) => {
     try {
 
         // Grab data from body
-        const { user1, user2, user1Id } = req.body;
+        const { user1, user2 } = req.body;
 
         // Validation
-        const userExists1 = await User.findOne({ username: user1 });
+        const userExists = await User.findOne({ username: user1 });
         const userExists2 = await User.findOne({ username: user2 });
-        if (!userExists1 || !userExists2) {
+        if (!userExists || !userExists2) {
             return res.status(400).send("One or more of the users does not exist.");
         }
         if (user1 === user2) {
             return res.status(400).send("You can't start a convo with yourself.");
         }
-        const existingConvo1 = await Conversation.findOne({ user1, user2 });
+        const existingConvo = await Conversation.findOne({ user1, user2 });
         const existingConvo2 = await Conversation.findOne({ user1: user2, user2: user1 });
-        if (existingConvo1 || existingConvo2) {
+        if (existingConvo || existingConvo2) {
             return res.status(400).send("This conversation already exists.");
         }
 
         // Save the new conversation
-        const user2Id = await User.findOne({ username: user2 });
-        const newConvo = new Conversation({ user1: user1, user2: user2, user1Id: user1Id, user2Id: user2Id._id, messageCount: 0 });
-        const newConvo2 = new Conversation({ user1: user2, user2: user1, user1Id: user2Id._id, user2Id: user1Id, messageCount: 0 });
+        const newConvo = new Conversation({ user1: user1, user2: user2, messageCount: 0 });
         const savedConvo = await newConvo.save();
-        const savedConvo2 = await newConvo2.save();
-        const convos = [savedConvo, savedConvo2];
 
-        res.json(convos);
+        res.json(savedConvo);
 
     } catch (err) {
         console.error(err);
         res.status(500).send();
     }
 });
+
+router.put("/convo/count", auth, async (req, res) => {
+    try {
+        const { convoId } = req.body;
+
+        const currentCount = await Conversation.findById(convoId);
+        const newCount = currentCount.messageCount + 1;
+        await Conversation.findByIdAndUpdate(convoId, { messageCount: newCount });
+
+        res.send(`Successfully updated count to ${newCount}`)
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+})
 
 // Get One Conversation Data
 router.get("/convo/:id", auth, async (req, res) => {
@@ -75,13 +85,27 @@ router.get("/convo/:id", auth, async (req, res) => {
 });
 
 // Get All Conversations for a User
-router.get("/convos/:id", auth, async (req, res) => {
+router.get("/convos/:user", auth, async (req, res) => {
     try {
 
-        const { id } = req.params;
-        const convo = await Conversation.find({ user1Id: id });
+        const { user } = req.params;
+        const convo = await Conversation.find({ user1: user });
+        const convo2 = await Conversation.find({ user2: user });
 
-        return res.json(convo);
+        if (convo.length !== 0 && convo2.length === 0) {
+            return res.json(convo);
+        } else if (convo.length === 0 && convo2.length !== 0) {
+            return res.json(convo2);
+        } else if (convo.length !== 0 && convo2.length !== 0) {
+            const convoArray = [];
+            for (let i = 0; i < convo.length; i++) {
+                convoArray.push(convo[i]);
+            }
+            for (let i = 0; i < convo2.length; i++) {
+                convoArray.push(convo2[i]);
+            }
+            return res.json(convoArray);
+        };
 
     } catch (err) {
         console.error(err);
@@ -89,26 +113,14 @@ router.get("/convos/:id", auth, async (req, res) => {
     }
 });
 
-// Sent Messages
-router.get("/sent", auth, async (req, res) => {
+// Get Conversation Messages
+router.get("/:convoId", auth, async (req, res) => {
     try {
 
-        const sent = await Message.find({ fromId: req.user }).sort({ date: "desc" });
-        res.json(sent);
+        const { convoId } = req.params;
+        const messages = await Message.find({ convoId });
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send();
-    }
-});
-
-// Received Messages
-router.get("/received", auth, async (req, res) => {
-    try {
-
-        const received = await Message.find({ toId: req.user }).sort({ date: "desc" });
-        res.json(received);
-
+        res.json(messages);
     } catch (err) {
         console.error(err);
         res.status(500).send();
