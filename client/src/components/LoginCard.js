@@ -76,7 +76,7 @@ export default function LoginCard({ setLoading }) {
             changePage("/home");
         } catch (err) {
             console.error(err);
-            alert(err.request.response);
+            alert("something went wrong");
         }
     }
 
