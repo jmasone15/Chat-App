@@ -1,23 +1,29 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import AuthContext from "./utils/AuthContext";
-import Nav from "./components/Nav";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Loading from "./pages/Loading";
 import NotFound from "./pages/NotFound";
-import Conversation from "./pages/Conversation ";
+import InitialLoading from "./pages/InitialLoading";
 
 export default function Router() {
 
     const { loggedIn } = useContext(AuthContext);
 
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        setTimeout(() => setLoading(false), 2500);
+    }, []);
+
     return (
         <BrowserRouter>
-            <Nav />
             {loggedIn === false && (
                 <Switch>
                     <Route exact path="/">
-                        <Login />
+                        {loading === false ? <Login loading={loading} setLoading={setLoading} /> : <InitialLoading loading={loading} setLoading={setLoading} />}
                     </Route>
                     <Route exact path="/home">
                         <Redirect to="/" />
@@ -36,10 +42,10 @@ export default function Router() {
                         <Redirect to="/home" />
                     </Route>
                     <Route exact path="/home">
-                        <Home />
+                        {loading === false ? <Home loading={loading} setLoading={setLoading} /> : <Loading loading={loading} setLoading={setLoading} />}
                     </Route>
-                    <Route exact path="/convo/:id/:name">
-                        <Conversation />
+                    <Route exact path="/profile">
+                        {loading === false ? <Profile loading={loading} setLoading={setLoading} /> : <Loading loading={loading} setLoading={setLoading} />}
                     </Route>
                     <Route>
                         <NotFound />
