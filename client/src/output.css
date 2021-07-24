@@ -238,6 +238,7 @@ body {
   border-radius: 10%;
   text-align: center;
   box-shadow: 5px 5px 5px #616060;
+  min-height: 400px;
 }
 
 .page {
