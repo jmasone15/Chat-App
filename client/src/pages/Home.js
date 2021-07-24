@@ -13,7 +13,7 @@ export default function Home({ loading, setLoading }) {
 
     const { username } = useContext(UserContext);
     const [conversations, setConversations] = useState("");
-    const [convoShow, setConvoShow] = useState(false);
+    const [selectedUser, setSelectedUser] = useState("none");
     const [newUser2, setNewUser2] = useState("");
     const history = useHistory();
 
@@ -23,11 +23,6 @@ export default function Home({ loading, setLoading }) {
             setConversations(convos.data);
             console.log(convos.data);
         }
-    }
-
-    async function getOneConversation(e, name, id) {
-        e.preventDefault();
-        history.push(`/convo/${id}/${name}`);
     }
 
     async function startConversation(e) {
@@ -49,6 +44,30 @@ export default function Home({ loading, setLoading }) {
         };
     };
 
+    function groupBy2(array, prop) {
+        let grouped = {};
+        for (let i = 0; i < array.length; i++) {
+            let p = array[i][prop];
+            if (!grouped[p]) { grouped[p] = []; }
+            grouped[p].push(array[i]);
+        }
+        return grouped;
+    }
+
+    const getMessages = async (e, id, user2) => {
+        e.preventDefault();
+
+        try {
+            const convoMessages = await axios.get(`/message/${id}`);
+            const allMessages = convoMessages.data;
+            const messageObject = groupBy2(allMessages, "fromUser");
+            setSelectedUser(user2);
+            console.log(messageObject);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         getConversations();
     }, [username]);
@@ -65,11 +84,18 @@ export default function Home({ loading, setLoading }) {
                     <Container fluid style={{ marginTop: "100px" }}>
                         <Row style={{ alignItems: "center", marginLeft: "25px" }}>
                             <Col xl="2">
-                                <SideColumn convos={conversations} />
+                                <SideColumn convos={conversations} getMessages={getMessages} />
                             </Col>
-                            <Col xl="10">
-                                <MessagesBox />
-                            </Col>
+                            {selectedUser !== "none" && (
+                                <Col xl="10">
+                                    <MessagesBox selectedUser={selectedUser} />
+                                </Col>
+                            )}
+                            {selectedUser === "none" && (
+                                <Col xl="10">
+                                    <h1 style={{ textAlign: "center" }}>Click on a name to open their conversation</h1>
+                                </Col>
+                            )}
                         </Row>
                     </Container>
                 </Col>

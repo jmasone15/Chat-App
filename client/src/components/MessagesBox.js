@@ -3,12 +3,17 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-export default function MessagesBox() {
+export default function MessagesBox({ selectedUser }) {
+
+    const capFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     return (
         <Container fluid className="message-container">
             <Row>
                 <Col className="message-header">
-                    <h1>Conversation with "Name"</h1>
+                    <h1>Conversation with {capFirstLetter(selectedUser)}</h1>
                 </Col>
             </Row>
             <Row>
