@@ -7,14 +7,11 @@ const key = "8fUM+bAxexjhyBqRxQywXcAAmh4&NHVDA987A&A##HFDny=&Sm";
 // Signup Route
 router.post("/signup", async (req, res) => {
     try {
-        const { username, email, password, passwordVerify } = req.body;
+        const { username, email, password } = req.body;
 
         //Validation
         if (password.length < 6) {
             return res.status(400).send("Please enter a password that is at least 6 characters long.");
-        };
-        if (password !== passwordVerify) {
-            return res.status(400).send("Please enter the same password twice.");
         };
 
         // Check for existing users

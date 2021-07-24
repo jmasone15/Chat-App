@@ -13,7 +13,6 @@ export default function LoginCard({ setLoading }) {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [passwordVerify, setPasswordVerify] = useState("");
 
     const { getLoggedIn } = useContext(AuthContext);
     const history = useHistory();
@@ -28,8 +27,7 @@ export default function LoginCard({ setLoading }) {
         }
     };
 
-    const changePage = (e, link) => {
-        e.preventDefault();
+    const changePage = (link) => {
         setLoading(true);
         setTimeout(() => setLoading(false), 1000);
         history.push(link);
@@ -51,7 +49,7 @@ export default function LoginCard({ setLoading }) {
             setPassword("");
 
             // Send to protected home page
-            history.push("/home");
+            changePage("/home");
         } catch (err) {
             console.error(err);
             alert(err.request.response);
@@ -63,7 +61,7 @@ export default function LoginCard({ setLoading }) {
 
         try {
             // Grab user data from form
-            const signUpData = { email, username, password, passwordVerify };
+            const signUpData = { email, username, password };
 
             // API calls to log user in
             await axios.post("/user/signup", signUpData);
@@ -73,10 +71,9 @@ export default function LoginCard({ setLoading }) {
             setEmail("");
             setUsername("");
             setPassword("");
-            setPasswordVerify("");
 
             // Send to protected home page
-            history.push("/home");
+            changePage("/home");
         } catch (err) {
             console.error(err);
             alert(err.request.response);
@@ -89,7 +86,7 @@ export default function LoginCard({ setLoading }) {
                 <Col>
                     <div className={switcher ? "login-container right-panel-active" : "login-container"} id="container">
                         <div className="form-container sign-in-container">
-                            <form className="form" action="#">
+                            <form className="form" onSubmit={(e) => userLogin(e)}>
                                 <h1>Sign in</h1>
                                 <div className="social-container">
                                     <a href="#" className="social"><FaGoogle /></a>
@@ -116,18 +113,36 @@ export default function LoginCard({ setLoading }) {
                             </form>
                         </div>
                         <div className="form-container sign-up-container">
-                            <form className="form" action="#">
+                            <form className="form" onSubmit={(e) => userSignUp(e)}>
                                 <h1>Create Account</h1>
                                 <div className="social-container">
                                     <a href="#" className="social"><FaGoogle /></a>
                                     <a href="#" className="social"><FaLinkedinIn /></a>
                                     <a href="#" className="social"><FaGithub /></a>
                                 </div>
-                                <input className="input" type="text" placeholder="Username" />
-                                <input className="input" type="email" placeholder="Email" />
-                                <input className="input" type="password" placeholder="Password" />
+                                <input
+                                    className="input"
+                                    type="text"
+                                    placeholder="Username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+                                <input
+                                    className="input"
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                <input
+                                    className="input"
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                                 <br />
-                                <button className="button su" onClick={(e) => changePage(e, "/home")}>Sign Up</button>
+                                <button type="submit" className="button su">Sign Up</button>
                             </form>
                         </div>
                         <div className="overlay-container">
