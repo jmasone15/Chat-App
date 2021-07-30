@@ -45,16 +45,6 @@ export default function Home({ loading, setLoading }) {
         };
     };
 
-    function groupBy2(array, prop) {
-        let grouped = {};
-        for (let i = 0; i < array.length; i++) {
-            let p = array[i][prop];
-            if (!grouped[p]) { grouped[p] = []; }
-            grouped[p].push(array[i]);
-        }
-        return grouped;
-    }
-
     const getMessages = async (e, id, user2) => {
         e.preventDefault();
 
@@ -87,7 +77,7 @@ export default function Home({ loading, setLoading }) {
                     <Container fluid style={{ marginTop: "100px" }}>
                         <Row style={{ alignItems: "center", marginLeft: "25px" }}>
                             <Col xl="2">
-                                <SideColumn convos={conversations} getMessages={getMessages} />
+                                <SideColumn username={username} convos={conversations} getMessages={getMessages} />
                             </Col>
                             {selectedUser !== "none" && (
                                 <Col xl="10">
