@@ -332,6 +332,7 @@ body {
   background-color: white;
   min-height: 750px;
   max-width: 1300px;
+  position: relative;
 }
 
 .message-header {
@@ -464,6 +465,33 @@ body {
 .message-button.learn-more:active::before {
   box-shadow: 0 0 0 2px #b18597, 0 0 #ffe3e2;
   transform: translate3d(0, 0, -1em);
+}
+
+.messages {
+  overflow-y: scroll;
+  max-height: 440px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.message {
+  max-width: max-content;
+  padding: 7px;
+  margin-top: 30px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.left {
+  background-color: rgba(0, 0, 0, 0.22);
+  margin-left: 5px;
+}
+
+.right {
+  background-color: #2c5fe9;
+  color: white;
+  margin-left: calc(100% - 240px);
+  margin-right: 5px;
 }
 
 /*# sourceMappingURL=output.css.map */

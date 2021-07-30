@@ -336,6 +336,7 @@ body {
 	background-color: white;
 	min-height: 750px;
 	max-width: 1300px;
+	position: relative;
 }
 
 .message-header {
@@ -480,4 +481,31 @@ $pink-shadow: #ffe3e2;
       }
     }
   }
+}
+
+.messages {
+	overflow-y: scroll;
+	max-height: 440px;
+	margin-top: 20px;
+	position: relative;
+}
+
+.message {
+	max-width: max-content;
+	padding: 7px;
+	margin-top: 30px;
+	border-radius: 8px;
+	text-align: left;
+}
+
+.left {
+	background-color: rgba(0,0,0,0.22);
+	margin-left: 5px;
+}
+
+.right {
+	background-color: rgb(44, 95, 233);
+	color: white;
+	margin-left: calc(100% - 240px);
+	margin-right: 5px;
 }

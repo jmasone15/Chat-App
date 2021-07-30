@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-export default function MessagesBox({ selectedUser }) {
+export default function MessagesBox({ selectedUser, data }) {
 
     const capFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -18,7 +18,11 @@ export default function MessagesBox({ selectedUser }) {
             </Row>
             <Row>
                 <Col>
-                    <h1>messages here</h1>
+                    <div className="messages">
+                        {data.map(m => (
+                            <p key={m.id} className={m.fromUser === selectedUser ? "message left" : "message right"}>{m.body}</p>
+                        ))}
+                    </div>
                 </Col>
             </Row>
             <Row className="message-footer">

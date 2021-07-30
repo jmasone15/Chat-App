@@ -15,6 +15,7 @@ export default function Home({ loading, setLoading }) {
     const [conversations, setConversations] = useState("");
     const [selectedUser, setSelectedUser] = useState("none");
     const [newUser2, setNewUser2] = useState("");
+    const [messages, setMessages] = useState([]);
     const history = useHistory();
 
     async function getConversations() {
@@ -59,10 +60,12 @@ export default function Home({ loading, setLoading }) {
 
         try {
             const convoMessages = await axios.get(`/message/${id}`);
-            const allMessages = convoMessages.data;
-            const messageObject = groupBy2(allMessages, "fromUser");
+            const sortedMessages = convoMessages.data.sort((x, y) => {
+                return x.date - y.date;
+            });
             setSelectedUser(user2);
-            console.log(messageObject);
+            setMessages(sortedMessages);
+            console.log(sortedMessages);
         } catch (err) {
             console.error(err);
         }
@@ -88,7 +91,7 @@ export default function Home({ loading, setLoading }) {
                             </Col>
                             {selectedUser !== "none" && (
                                 <Col xl="10">
-                                    <MessagesBox selectedUser={selectedUser} />
+                                    <MessagesBox selectedUser={selectedUser} data={messages} />
                                 </Col>
                             )}
                             {selectedUser === "none" && (
